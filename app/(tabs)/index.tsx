@@ -145,7 +145,7 @@ function PrayerTimesDisplay() {
                       },
                     ]}
                   >
-                    {formatTime(prayer.time, false, false)}
+                    {formatTime(prayer.time, false, true)}
                   </Text>
                   {status.status === "upcoming" && (
                     <Text style={[styles.timeUntil, { color: colors.text }]}>
@@ -218,7 +218,7 @@ function PrayerTimesDisplay() {
                         style={[styles.jummahTime, { color: colors.prayer }]}
                       >
                         {schedule.times
-                          .map((time) => formatTime(time, false, false))
+                          .map((time) => formatTime(time, false, true))
                           .join(" | ")}
                       </Text>
                     </View>
