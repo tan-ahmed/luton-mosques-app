@@ -5,36 +5,52 @@
 
 import { Platform } from "react-native";
 
-// Islamic-inspired color scheme
-const tintColorLight = "#2c5f41"; // Dark green for light mode
-const tintColorDark = "#FFD700"; // Gold for dark mode
+// Brand colors
+export const BRAND_ORANGE = "#FF8F70";
+export const BRAND_ORANGE_LIGHT = "#FFF4F0";
+
+// Neutral colors
+const NEUTRAL_GREY_600 = "#666666";
+const NEUTRAL_GREY_500 = "#999999";
+const NEUTRAL_GREY_200 = "#e0e0e0";
+const NEUTRAL_GREY_100 = "#f8f9fa";
+
+// Dark theme specific
+const DARK_BLUE = "#041c38";
+const DARK_BLUE_LIGHT = "#283593";
+const DARK_BLUE_BORDER = "#3f51b5";
+const DARK_GOLD = "#ffbc91";
+const DARK_GOLD_ICON = "#B8860B";
+const DARK_CREAM = "#FFF8DC";
 
 export const Colors = {
   light: {
     text: "#1a1a1a",
     background: "#ffffff",
-    tint: tintColorLight,
-    icon: "#666666",
-    tabIconDefault: "#999999",
-    tabIconSelected: tintColorLight,
-    card: "#f8f9fa",
-    border: "#e0e0e0",
-    mosque: "#2c5f41",
-    mosqueLight: "#e8f5e8",
-    prayer: "#1a472a",
+    tint: BRAND_ORANGE,
+    icon: NEUTRAL_GREY_600,
+    tabIconDefault: NEUTRAL_GREY_500,
+    tabIconSelected: BRAND_ORANGE,
+    card: NEUTRAL_GREY_100,
+    border: NEUTRAL_GREY_200,
+    mosque: BRAND_ORANGE,
+    mosqueLight: BRAND_ORANGE_LIGHT,
+    prayer: "#1a1a1a",
+    cardText: "#1a1a1a", // Dark text for card content
   },
   dark: {
-    text: "#ffbc91", // Gold text
-    background: "#041c38", // Navy blue background
-    tint: "#FF8F70", // Orange tint for active nav
-    icon: "#B8860B", // Dark goldenrod
-    tabIconDefault: "#999999", // Light grey for inactive nav
-    tabIconSelected: "#FF8F70", // Orange for active nav
-    card: "#283593", // Lighter navy for cards
-    border: "#3f51b5", // Blue border
-    mosque: "#ff8f6e", // Gold for mosque names
-    mosqueLight: "#3f51b5", // Light blue background
-    prayer: "#FFF8DC", // Cream for prayer times
+    text: DARK_GOLD,
+    background: DARK_BLUE,
+    tint: BRAND_ORANGE,
+    icon: DARK_GOLD_ICON,
+    tabIconDefault: NEUTRAL_GREY_500,
+    tabIconSelected: BRAND_ORANGE,
+    card: DARK_BLUE_LIGHT,
+    border: DARK_BLUE_BORDER,
+    mosque: BRAND_ORANGE,
+    mosqueLight: DARK_BLUE_BORDER,
+    prayer: DARK_CREAM,
+    cardText: "#ffffff", // White text for card content
   },
 };
 

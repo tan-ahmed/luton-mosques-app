@@ -1,5 +1,6 @@
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
+import { BRAND_ORANGE } from "@/constants/theme";
 import { useMosqueBySlug, useMosqueData } from "@/hooks/use-mosque-data";
 import { useAppTheme, useSelectedMosque } from "@/stores/app-store";
 import {
@@ -103,7 +104,9 @@ function PrayerTimesDisplay() {
                   {
                     // backgroundColor: colors.card,
                     borderColor:
-                      status.status === "current" ? "#FF8F70" : colors.border,
+                      status.status === "current"
+                        ? BRAND_ORANGE
+                        : colors.border,
                     borderWidth: status.status === "current" ? 2 : 1,
                   },
                 ]}
@@ -114,7 +117,9 @@ function PrayerTimesDisplay() {
                       styles.prayerName,
                       {
                         color:
-                          status.status === "current" ? "#FF8F70" : colors.text,
+                          status.status === "current"
+                            ? BRAND_ORANGE
+                            : colors.text,
                         opacity: status.status === "passed" ? 0.5 : 1,
                       },
                     ]}
@@ -134,7 +139,7 @@ function PrayerTimesDisplay() {
                       {
                         color:
                           status.status === "current"
-                            ? "#FF8F70"
+                            ? BRAND_ORANGE
                             : colors.prayer,
                         opacity: status.status === "passed" ? 0.5 : 1,
                       },

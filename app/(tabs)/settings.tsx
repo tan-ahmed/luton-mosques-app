@@ -1,6 +1,7 @@
 import { MosqueSelector } from "@/components/mosque-selector";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
+import { BRAND_ORANGE } from "@/constants/theme";
 import { useMosqueBySlug, useMosqueIndex } from "@/hooks/use-mosque-data";
 import {
   useAppTheme,
@@ -151,13 +152,13 @@ export default function SettingsScreen() {
               <View style={styles.currentMosqueContainer}>
                 <View style={styles.mosqueInfo}>
                   <ThemedText
-                    style={[styles.mosqueName, { color: colors.text }]}
+                    style={[styles.mosqueName, { color: colors.cardText }]}
                   >
                     {selectedMosque.name}
                   </ThemedText>
                 </View>
                 <TouchableOpacity
-                  style={[styles.button, { backgroundColor: "#FF8F70" }]}
+                  style={[styles.button, { backgroundColor: BRAND_ORANGE }]}
                   onPress={handleChangeMosque}
                 >
                   <ThemedText style={[styles.buttonText, { color: "#FFF" }]}>
@@ -169,16 +170,13 @@ export default function SettingsScreen() {
               <View style={styles.currentMosqueContainer}>
                 <View style={styles.mosqueInfo}>
                   <ThemedText
-                    style={[
-                      styles.noMosqueText,
-                      { color: colors.text, opacity: 0.7 },
-                    ]}
+                    style={[styles.noMosqueText, { color: colors.cardText }]}
                   >
                     No mosque selected
                   </ThemedText>
                 </View>
                 <TouchableOpacity
-                  style={[styles.button, { backgroundColor: "#FF8F70" }]}
+                  style={[styles.button, { backgroundColor: BRAND_ORANGE }]}
                   onPress={handleChangeMosque}
                 >
                   <ThemedText style={[styles.buttonText, { color: "#FFF" }]}>
@@ -206,11 +204,11 @@ export default function SettingsScreen() {
               </ThemedText>
             </View>
             <View style={styles.infoContainer}>
-              <ThemedText style={styles.infoText}>
+              <ThemedText style={[styles.infoText, { color: colors.cardText }]}>
                 This app shows prayer times for mosques in Luton, provided by
                 InspireFM.
               </ThemedText>
-              <ThemedText style={styles.infoText}>
+              <ThemedText style={[styles.infoText, { color: colors.cardText }]}>
                 If your mosque's times are missing, please contact the mosque so
                 they can share the correct times with InspireFM.
               </ThemedText>
@@ -235,7 +233,11 @@ export default function SettingsScreen() {
             </View>
             <View style={styles.settingRow}>
               <View style={styles.settingLeft}>
-                <ThemedText style={styles.settingTitle}>Dark Mode</ThemedText>
+                <ThemedText
+                  style={[styles.settingTitle, { color: colors.cardText }]}
+                >
+                  Dark Mode
+                </ThemedText>
                 <ThemedText
                   style={[
                     styles.settingSubtitle,
@@ -328,6 +330,7 @@ const styles = StyleSheet.create({
   noMosqueText: {
     fontSize: 16,
     fontStyle: "italic",
+    opacity: 0.7,
   },
   button: {
     paddingHorizontal: 16,
@@ -344,7 +347,6 @@ const styles = StyleSheet.create({
   infoText: {
     fontSize: 14,
     lineHeight: 20,
-    color: "white",
   },
   dataSource: {
     fontSize: 12,
@@ -369,7 +371,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "500",
     marginBottom: 4,
-    color: "white",
   },
   settingSubtitle: {
     fontSize: 14,
