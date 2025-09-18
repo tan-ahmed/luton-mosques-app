@@ -18,6 +18,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function SettingsScreen() {
   const [showMosqueSelector, setShowMosqueSelector] = useState(false);
@@ -28,6 +29,7 @@ export default function SettingsScreen() {
   const { data: mosqueIndex } = useMosqueIndex();
   const { settings, toggleTheme } = useSettings();
   const { colors } = useAppTheme();
+  const insets = useSafeAreaInsets();
 
   const handleChangeMosque = () => {
     if (selectedMosqueSlug) {
@@ -126,107 +128,132 @@ export default function SettingsScreen() {
       <ScrollView
         style={[styles.container, { backgroundColor: colors.background }]}
       >
-        <ThemedView style={styles.header}>
-          <ThemedText type="title" style={styles.title}>
-            Settings
-          </ThemedText>
+        <ThemedView style={[styles.header, { paddingTop: insets.top + 20 }]}>
+          <ThemedText style={styles.title}>Settings</ThemedText>
         </ThemedView>
 
-        <ThemedView style={[styles.section, { backgroundColor: colors.card }]}>
-          <ThemedText
-            type="subtitle"
-            style={[styles.sectionTitle, { color: colors.mosque }]}
+        <View style={styles.sectionContainer}>
+          <View
+            style={[
+              styles.section,
+              {
+                borderColor: colors.border,
+                borderWidth: 1,
+              },
+            ]}
           >
-            Current Mosque
-          </ThemedText>
-          {selectedMosque ? (
-            <View style={styles.currentMosqueContainer}>
-              <ThemedText style={styles.mosqueName}>
-                {selectedMosque.name}
+            <View style={styles.sectionHeader}>
+              <ThemedText style={[styles.sectionTitle, { color: colors.text }]}>
+                Current Mosque
               </ThemedText>
-              <TouchableOpacity
-                style={[styles.button, { backgroundColor: colors.mosque }]}
-                onPress={handleChangeMosque}
-              >
-                <ThemedText
-                  style={[styles.buttonText, { color: colors.background }]}
+            </View>
+            {selectedMosque ? (
+              <View style={styles.currentMosqueContainer}>
+                <View style={styles.mosqueInfo}>
+                  <ThemedText
+                    style={[styles.mosqueName, { color: colors.text }]}
+                  >
+                    {selectedMosque.name}
+                  </ThemedText>
+                </View>
+                <TouchableOpacity
+                  style={[styles.button, { backgroundColor: "#FF8F70" }]}
+                  onPress={handleChangeMosque}
                 >
-                  Change Mosque
-                </ThemedText>
-              </TouchableOpacity>
-            </View>
-          ) : (
-            <View style={styles.currentMosqueContainer}>
-              <ThemedText style={styles.noMosqueText}>
-                No mosque selected
-              </ThemedText>
-              <TouchableOpacity
-                style={[styles.button, { backgroundColor: colors.mosque }]}
-                onPress={handleChangeMosque}
-              >
-                <ThemedText
-                  style={[styles.buttonText, { color: colors.background }]}
+                  <ThemedText style={[styles.buttonText, { color: "#FFF" }]}>
+                    Change
+                  </ThemedText>
+                </TouchableOpacity>
+              </View>
+            ) : (
+              <View style={styles.currentMosqueContainer}>
+                <View style={styles.mosqueInfo}>
+                  <ThemedText
+                    style={[
+                      styles.noMosqueText,
+                      { color: colors.text, opacity: 0.7 },
+                    ]}
+                  >
+                    No mosque selected
+                  </ThemedText>
+                </View>
+                <TouchableOpacity
+                  style={[styles.button, { backgroundColor: "#FF8F70" }]}
+                  onPress={handleChangeMosque}
                 >
-                  Select Mosque
+                  <ThemedText style={[styles.buttonText, { color: "#FFF" }]}>
+                    Select
+                  </ThemedText>
+                </TouchableOpacity>
+              </View>
+            )}
+          </View>
+        </View>
+
+        <View style={styles.sectionContainer}>
+          <View
+            style={[
+              styles.section,
+              {
+                borderColor: colors.border,
+                borderWidth: 1,
+              },
+            ]}
+          >
+            <View style={styles.sectionHeader}>
+              <ThemedText style={[styles.sectionTitle, { color: colors.text }]}>
+                App Information
+              </ThemedText>
+            </View>
+            <View style={styles.infoContainer}>
+              <ThemedText style={styles.infoText}>
+                This app shows prayer times for mosques in Luton, provided by
+                InspireFM.
+              </ThemedText>
+              <ThemedText style={styles.infoText}>
+                If your mosque's times are missing, please contact the mosque so
+                they can share the correct times with InspireFM.
+              </ThemedText>
+            </View>
+          </View>
+        </View>
+
+        <View style={styles.sectionContainer}>
+          <View
+            style={[
+              styles.section,
+              {
+                borderColor: colors.border,
+                borderWidth: 1,
+              },
+            ]}
+          >
+            <View style={styles.sectionHeader}>
+              <ThemedText style={[styles.sectionTitle, { color: colors.text }]}>
+                Display Settings
+              </ThemedText>
+            </View>
+            <View style={styles.settingRow}>
+              <View style={styles.settingLeft}>
+                <ThemedText style={styles.settingTitle}>Dark Mode</ThemedText>
+                <ThemedText
+                  style={[
+                    styles.settingSubtitle,
+                    { color: colors.text, opacity: 0.7 },
+                  ]}
+                >
+                  {settings.theme === "dark"
+                    ? "Use dark theme"
+                    : "Use light theme"}
                 </ThemedText>
-              </TouchableOpacity>
+              </View>
+              <Switch
+                value={settings.theme === "dark"}
+                onValueChange={toggleTheme}
+              />
             </View>
-          )}
-        </ThemedView>
-
-        <ThemedView style={[styles.section, { backgroundColor: colors.card }]}>
-          <ThemedText
-            type="subtitle"
-            style={[styles.sectionTitle, { color: colors.mosque }]}
-          >
-            App Information
-          </ThemedText>
-          <View style={styles.infoContainer}>
-            <ThemedText style={styles.infoText}>
-              This app shows prayer times for mosques in Luton, provided by
-              InspireFM.
-            </ThemedText>
-            <ThemedText style={styles.infoText}>
-              If your mosque’s times are missing, please contact the mosque so
-              they can share the correct times with InspireFM.
-            </ThemedText>
           </View>
-        </ThemedView>
-
-        <ThemedView style={[styles.section, { backgroundColor: colors.card }]}>
-          <ThemedText
-            type="subtitle"
-            style={[styles.sectionTitle, { color: colors.mosque }]}
-          >
-            Display Settings
-          </ThemedText>
-          <View style={styles.settingRow}>
-            <View style={styles.settingLeft}>
-              <ThemedText style={[styles.settingTitle, { color: colors.text }]}>
-                Dark Mode
-              </ThemedText>
-              <ThemedText
-                style={[
-                  styles.settingSubtitle,
-                  { color: colors.text, opacity: 0.7 },
-                ]}
-              >
-                {settings.theme === "dark"
-                  ? "Use dark theme"
-                  : "Use light theme"}
-              </ThemedText>
-            </View>
-            <Switch
-              value={settings.theme === "dark"}
-              onValueChange={toggleTheme}
-              trackColor={{
-                false: colors.border,
-                true: colors.mosque,
-              }}
-              thumbColor={settings.theme === "dark" ? colors.tint : "#f4f3f4"}
-            />
-          </View>
-        </ThemedView>
+        </View>
       </ScrollView>
     </>
   );
@@ -237,11 +264,16 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    padding: 20,
-    borderBottomWidth: 1,
+    paddingHorizontal: 20,
+    paddingBottom: 10,
   },
   title: {
-    textAlign: "center",
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  sectionContainer: {
+    paddingHorizontal: 20,
+    marginBottom: 8,
   },
   modalContainer: {
     flex: 1,
@@ -270,35 +302,32 @@ const styles = StyleSheet.create({
     height: 200,
   },
   section: {
-    margin: 16,
-    borderRadius: 12,
-    padding: 20,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
-    elevation: 2,
+    borderRadius: 8,
+    padding: 16,
+  },
+  sectionHeader: {
+    marginBottom: 12,
   },
   sectionTitle: {
-    marginBottom: 16,
+    fontSize: 18,
+    fontWeight: "600",
   },
   currentMosqueContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
   },
+  mosqueInfo: {
+    flex: 1,
+    marginRight: 12,
+  },
   mosqueName: {
     fontSize: 16,
     fontWeight: "500",
-    flex: 1,
-    marginRight: 12,
   },
   noMosqueText: {
     fontSize: 16,
     fontStyle: "italic",
-    opacity: 0.7,
-    flex: 1,
-    marginRight: 12,
   },
   button: {
     paddingHorizontal: 16,
@@ -315,7 +344,7 @@ const styles = StyleSheet.create({
   infoText: {
     fontSize: 14,
     lineHeight: 20,
-    color: "#555",
+    color: "white",
   },
   dataSource: {
     fontSize: 12,
@@ -340,6 +369,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "500",
     marginBottom: 4,
+    color: "white",
   },
   settingSubtitle: {
     fontSize: 14,
