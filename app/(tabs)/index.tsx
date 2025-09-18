@@ -71,7 +71,7 @@ function PrayerTimesDisplay() {
 
   return (
     <ScrollView
-      style={styles.container}
+      style={[styles.container, { backgroundColor: colors.background }]}
       refreshControl={
         <RefreshControl refreshing={isLoading} onRefresh={refetch} />
       }
