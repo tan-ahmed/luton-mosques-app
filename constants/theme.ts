@@ -26,10 +26,10 @@ export const Colors = {
   dark: {
     text: "#ffbc91", // Gold text
     background: "#041c38", // Navy blue background
-    tint: tintColorDark,
+    tint: "#FF8F70", // Orange tint for active nav
     icon: "#B8860B", // Dark goldenrod
-    tabIconDefault: "#8B7355", // Muted gold
-    tabIconSelected: tintColorDark,
+    tabIconDefault: "#999999", // Light grey for inactive nav
+    tabIconSelected: "#FF8F70", // Orange for active nav
     card: "#283593", // Lighter navy for cards
     border: "#3f51b5", // Blue border
     mosque: "#ff8f6e", // Gold for mosque names

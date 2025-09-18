@@ -8,6 +8,7 @@ import {
   getPrayerStatus,
   getTimeUntilNext,
 } from "@/utils/prayer-utils";
+import { MaterialIcons } from "@expo/vector-icons";
 import React from "react";
 import {
   RefreshControl,
@@ -16,12 +17,14 @@ import {
   Text,
   View,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 // Prayer time display component
 function PrayerTimesDisplay() {
   const { selectedMosqueSlug } = useSelectedMosque();
   const mosque = useMosqueBySlug(selectedMosqueSlug);
   const { colors } = useAppTheme();
+  const insets = useSafeAreaInsets();
   const {
     data: mosqueData,
     isLoading,
@@ -76,22 +79,15 @@ function PrayerTimesDisplay() {
         <RefreshControl refreshing={isLoading} onRefresh={refetch} />
       }
     >
-      <ThemedView style={styles.header}>
-        <ThemedText type="title" style={styles.mosqueTitle}>
-          {mosque.name}
-        </ThemedText>
-        <ThemedText style={styles.lastUpdated}>
+      <ThemedView style={[styles.header, { paddingTop: insets.top + 20 }]}>
+        <ThemedText style={styles.mosqueName}>{mosque.name}</ThemedText>
+        <ThemedText style={styles.dateText}>
           {todaysTimes ? formatDate(todaysTimes.date) : "Today"}
         </ThemedText>
       </ThemedView>
 
       {prayerTimes.length > 0 && (
-        <ThemedView
-          style={[
-            styles.prayerTimesContainer,
-            { backgroundColor: colors.card },
-          ]}
-        >
+        <View style={styles.prayerTimesList}>
           {prayerTimes.map((prayer, index) => {
             const nextPrayerTime =
               index < prayerTimes.length - 1
@@ -104,12 +100,11 @@ function PrayerTimesDisplay() {
                 key={prayer.name}
                 style={[
                   styles.prayerRow,
-                  { borderBottomColor: colors.border },
-                  status.backgroundColor !== "transparent" && {
-                    backgroundColor: status.backgroundColor,
-                    borderRadius: 8,
-                    marginVertical: 2,
-                    paddingHorizontal: 12,
+                  {
+                    // backgroundColor: colors.card,
+                    borderColor:
+                      status.status === "current" ? "#FF8F70" : colors.border,
+                    borderWidth: status.status === "current" ? 2 : 1,
                   },
                 ]}
               >
@@ -119,7 +114,8 @@ function PrayerTimesDisplay() {
                       styles.prayerName,
                       {
                         color:
-                          status.status === "current" ? "#FFF" : colors.mosque,
+                          status.status === "current" ? "#FF8F70" : colors.text,
+                        opacity: status.status === "passed" ? 0.5 : 1,
                       },
                     ]}
                   >
@@ -137,7 +133,10 @@ function PrayerTimesDisplay() {
                       styles.prayerTime,
                       {
                         color:
-                          status.status === "current" ? "#FFF" : colors.prayer,
+                          status.status === "current"
+                            ? "#FF8F70"
+                            : colors.prayer,
+                        opacity: status.status === "passed" ? 0.5 : 1,
                       },
                     ]}
                   >
@@ -149,10 +148,17 @@ function PrayerTimesDisplay() {
                     </Text>
                   )}
                 </View>
+                <View style={styles.notificationIcon}>
+                  <MaterialIcons
+                    name="notifications-none"
+                    size={20}
+                    color={colors.icon}
+                  />
+                </View>
               </View>
             );
           })}
-        </ThemedView>
+        </View>
       )}
 
       {mosque.jummahSchedule &&
@@ -177,42 +183,44 @@ function PrayerTimesDisplay() {
           if (currentWeekJummah.length === 0) return null;
 
           return (
-            <ThemedView
-              style={[
-                styles.jummahContainer,
-                { backgroundColor: colors.mosqueLight },
-              ]}
-            >
-              <ThemedText
-                type="subtitle"
-                style={[styles.jummahTitle, { color: colors.mosque }]}
-              >
-                This Week&apos;s Jummah
-              </ThemedText>
-              {currentWeekJummah.map((schedule, index) => (
-                <View key={index} style={styles.jummahRow}>
-                  {/* <Text style={[styles.jummahDate, { color: colors.mosque }]}>
-                    {formatDate(schedule.date)}
-                  </Text> */}
-                  <View style={styles.jummahTimes}>
-                    {schedule.times.map((time, timeIndex) => (
-                      <Text
-                        key={timeIndex}
-                        style={[
-                          styles.jummahTime,
-                          {
-                            color: colors.prayer,
-                            backgroundColor: colors.background,
-                          },
-                        ]}
-                      >
-                        {formatTime(time, false, false)}
+            <View style={styles.jummahContainer}>
+              {currentWeekJummah.map((schedule, index) => {
+                // Check if today is Friday
+                const today = new Date();
+                const isFriday = today.getDay() === 5; // Friday is day 5
+
+                return (
+                  <View
+                    key={index}
+                    style={[
+                      styles.jummahRow,
+                      {
+                        borderColor: colors.border,
+                        borderWidth: 1,
+                      },
+                      isFriday && {
+                        backgroundColor: colors.card,
+                      },
+                    ]}
+                  >
+                    <View style={styles.jummahLeftSection}>
+                      <Text style={[styles.jummahName, { color: colors.text }]}>
+                        Jummah
                       </Text>
-                    ))}
+                    </View>
+                    <View style={styles.jummahRightSection}>
+                      <Text
+                        style={[styles.jummahTime, { color: colors.prayer }]}
+                      >
+                        {schedule.times
+                          .map((time) => formatTime(time, false, false))
+                          .join(" | ")}
+                      </Text>
+                    </View>
                   </View>
-                </View>
-              ))}
-            </ThemedView>
+                );
+              })}
+            </View>
           );
         })()}
     </ScrollView>
@@ -236,40 +244,40 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   header: {
-    padding: 20,
-    borderBottomWidth: 1,
+    paddingHorizontal: 20,
+    paddingBottom: 10,
   },
-  mosqueTitle: {
-    textAlign: "center",
-    marginBottom: 8,
+  mosqueName: {
+    fontSize: 16,
+    fontWeight: "600",
+    marginBottom: 4,
   },
-  lastUpdated: {
-    textAlign: "center",
+  dateText: {
     fontSize: 14,
     opacity: 0.7,
   },
-  prayerTimesContainer: {
-    margin: 20,
-    padding: 20,
-    borderRadius: 12,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+  prayerTimesList: {
+    paddingHorizontal: 20,
+    gap: 8,
   },
   prayerRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     paddingVertical: 16,
-    borderBottomWidth: 1,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    marginBottom: 8,
   },
   prayerLeftSection: {
     flex: 1,
   },
   prayerRightSection: {
     alignItems: "flex-end",
+    marginRight: 12,
+  },
+  notificationIcon: {
+    padding: 4,
   },
   prayerName: {
     fontSize: 18,
@@ -291,35 +299,32 @@ const styles = StyleSheet.create({
     opacity: 0.7,
   },
   jummahContainer: {
-    margin: 20,
-    marginTop: 0,
-    padding: 20,
-    borderRadius: 12,
-  },
-  jummahTitle: {
-    textAlign: "center",
-    marginBottom: 16,
+    paddingHorizontal: 20,
+    marginTop: 8,
+    gap: 8,
   },
   jummahRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingVertical: 8,
+    paddingVertical: 16,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    marginBottom: 8,
   },
-  jummahDate: {
-    fontSize: 14,
-    fontWeight: "500",
+  jummahLeftSection: {
+    flex: 1,
   },
-  jummahTimes: {
-    flexDirection: "row",
-    gap: 12,
+  jummahRightSection: {
+    alignItems: "flex-end",
+  },
+  jummahName: {
+    fontSize: 18,
+    fontWeight: "600",
   },
   jummahTime: {
-    fontSize: 14,
+    fontSize: 18,
     fontWeight: "bold",
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 6,
   },
   errorText: {
     color: "#d32f2f",
