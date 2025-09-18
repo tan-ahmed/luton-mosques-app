@@ -205,12 +205,10 @@ export default function SettingsScreen() {
             </View>
             <View style={styles.infoContainer}>
               <ThemedText style={[styles.infoText, { color: colors.cardText }]}>
-                This app shows prayer times for mosques in Luton, provided by
-                InspireFM.
+                Prayer times provided by InspireFM.
               </ThemedText>
               <ThemedText style={[styles.infoText, { color: colors.cardText }]}>
-                If your mosque's times are missing, please contact the mosque so
-                they can share the correct times with InspireFM.
+                Missing times? Ask your mosque to share data with InspireFM.
               </ThemedText>
             </View>
           </View>
