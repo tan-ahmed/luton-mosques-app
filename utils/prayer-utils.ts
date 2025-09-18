@@ -1,5 +1,16 @@
 // Prayer time formatting and status utilities
 
+/**
+ * Formats a time string into a readable format
+ * @param time - Time string in HH:MM or HH:MM:SS format
+ * @param displaySeconds - Whether to include seconds in the output
+ * @param is24Hour - Whether to use 24-hour format (true) or 12-hour format with AM/PM (false)
+ * @returns Formatted time string or "-" if invalid
+ * @example
+ * formatTime("13:30", false, true) // "13:30"
+ * formatTime("13:30", false, false) // "1:30 PM"
+ * formatTime("13:30:45", true, true) // "13:30:45"
+ */
 export const formatTime = (
   time: string | undefined,
   displaySeconds: boolean = false,
@@ -33,6 +44,13 @@ export const formatTime = (
   return string;
 };
 
+/**
+ * Formats a date string from DD-MM-YYYY format to a readable long format
+ * @param dateString - Date string in DD-MM-YYYY format
+ * @returns Formatted date string (e.g., "Monday, 15 January 2024") or original string if parsing fails
+ * @example
+ * formatDate("15-01-2024") // "Monday, 15 January 2024"
+ */
 export const formatDate = (dateString: string): string => {
   try {
     // Parse DD-MM-YYYY format
@@ -50,6 +68,13 @@ export const formatDate = (dateString: string): string => {
   }
 };
 
+/**
+ * Formats a date string from DD-MM-YYYY format to a short readable format
+ * @param dateString - Date string in DD-MM-YYYY format
+ * @returns Formatted date string (e.g., "Mon, 15 Jan") or original string if parsing fails
+ * @example
+ * formatDateShort("15-01-2024") // "Mon, 15 Jan"
+ */
 export const formatDateShort = (dateString: string): string => {
   try {
     const [day, month, year] = dateString.split("-").map(Number);
@@ -65,13 +90,28 @@ export const formatDateShort = (dateString: string): string => {
   }
 };
 
+/**
+ * Prayer status information
+ */
 export interface PrayerStatus {
+  /** Current status of the prayer */
   status: "upcoming" | "current" | "ending" | "passed";
+  /** Text color for the prayer */
   color: string;
+  /** Background color for the prayer */
   backgroundColor: string;
+  /** Display label for the status */
   label: string;
 }
 
+/**
+ * Determines the current status of a prayer based on the current time
+ * @param prayerTime - Time string in HH:MM format
+ * @param nextPrayerTime - Optional next prayer time for determining current prayer period
+ * @returns PrayerStatus object with status, colors, and label
+ * @example
+ * getPrayerStatus("13:30", "16:00") // Returns status based on current time
+ */
 export const getPrayerStatus = (
   prayerTime: string,
   nextPrayerTime?: string
@@ -143,6 +183,14 @@ export const getPrayerStatus = (
   }
 };
 
+/**
+ * Calculates the time remaining until the next prayer
+ * @param prayerTime - Time string in HH:MM format
+ * @returns Formatted time string (e.g., "2h 30m" or "45m")
+ * @example
+ * getTimeUntilNext("14:30") // "2h 30m" (if current time is 12:00)
+ * getTimeUntilNext("13:45") // "45m" (if current time is 13:00)
+ */
 export const getTimeUntilNext = (prayerTime: string): string => {
   const currentTime = new Date();
   const [hours, minutes] = prayerTime.split(":").map(Number);

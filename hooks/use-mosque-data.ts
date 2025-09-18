@@ -36,7 +36,10 @@ export interface MosqueData {
   timings: PrayerTiming[];
 }
 
-// Hook to fetch the mosque index
+/**
+ * Hook to fetch the mosque index from the GitHub repository
+ * @returns Query result containing list of available mosques and metadata
+ */
 export function useMosqueIndex() {
   return useQuery<MosqueIndex>({
     queryKey: ["mosque-index"],
@@ -52,7 +55,11 @@ export function useMosqueIndex() {
   });
 }
 
-// Hook to fetch individual mosque prayer data
+/**
+ * Hook to fetch prayer data for a specific mosque
+ * @param mosqueSlug - The slug identifier for the mosque
+ * @returns Query result containing prayer times and mosque information
+ */
 export function useMosqueData(mosqueSlug: string | null) {
   return useQuery<MosqueData>({
     queryKey: ["mosque-data", mosqueSlug],
@@ -73,7 +80,11 @@ export function useMosqueData(mosqueSlug: string | null) {
   });
 }
 
-// Helper hook to get a specific mosque from the index
+/**
+ * Helper hook to get a specific mosque from the index by slug
+ * @param slug - The slug identifier for the mosque
+ * @returns Mosque entry object or null if not found
+ */
 export function useMosqueBySlug(slug: string | null) {
   const { data: mosqueIndex } = useMosqueIndex();
 
