@@ -12,10 +12,13 @@ import { Picker } from "@react-native-picker/picker";
 import React, { useState } from "react";
 import {
   Alert,
+  FlatList,
   Modal,
+  Platform,
   ScrollView,
   StyleSheet,
   Switch,
+  Text,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -24,6 +27,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 export default function SettingsScreen() {
   const [showMosqueSelector, setShowMosqueSelector] = useState(false);
   const [showMosquePicker, setShowMosquePicker] = useState(false);
+  const [showAndroidModal, setShowAndroidModal] = useState(false);
   const [tempSelectedSlug, setTempSelectedSlug] = useState("");
   const { selectedMosqueSlug, setSelectedMosque } = useSelectedMosque();
   const selectedMosque = useMosqueBySlug(selectedMosqueSlug);
@@ -34,9 +38,13 @@ export default function SettingsScreen() {
 
   const handleChangeMosque = () => {
     if (selectedMosqueSlug) {
-      // Show picker modal for existing users
+      // Show different modals based on platform
       setTempSelectedSlug(selectedMosqueSlug);
-      setShowMosquePicker(true);
+      if (Platform.OS === "ios") {
+        setShowMosquePicker(true);
+      } else {
+        setShowAndroidModal(true);
+      }
     } else {
       // Show full mosque selector for first-time users
       setShowMosqueSelector(true);
@@ -66,6 +74,27 @@ export default function SettingsScreen() {
   const handlePickerCancel = () => {
     setTempSelectedSlug(selectedMosqueSlug || "");
     setShowMosquePicker(false);
+  };
+
+  const handleAndroidModalClose = () => {
+    setTempSelectedSlug(selectedMosqueSlug || "");
+    setShowAndroidModal(false);
+  };
+
+  const handleAndroidMosqueSelect = async (slug: string) => {
+    if (slug && slug !== selectedMosqueSlug) {
+      try {
+        await setSelectedMosque(slug);
+        setShowAndroidModal(false);
+      } catch {
+        Alert.alert(
+          "Error",
+          "Failed to save mosque selection. Please try again."
+        );
+      }
+    } else {
+      setShowAndroidModal(false);
+    }
   };
 
   if (showMosqueSelector) {
@@ -126,6 +155,101 @@ export default function SettingsScreen() {
         </View>
       </Modal>
 
+      {/* Android Modal */}
+      <Modal
+        visible={showAndroidModal}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={handleAndroidModalClose}
+      >
+        <View style={styles.modalOverlay}>
+          <View
+            style={[
+              styles.androidModalContent,
+              { backgroundColor: colors.card },
+            ]}
+          >
+            <View style={styles.modalHeader}>
+              <Text style={[styles.modalTitle, { color: colors.text }]}>
+                Select Mosque
+              </Text>
+              <TouchableOpacity
+                style={styles.closeButton}
+                onPress={handleAndroidModalClose}
+              >
+                <Text
+                  style={[styles.closeButtonText, { color: colors.mosque }]}
+                >
+                  ✕
+                </Text>
+              </TouchableOpacity>
+            </View>
+
+            <FlatList
+              data={availableMosques}
+              keyExtractor={(item) => item.slug}
+              renderItem={({ item }) => (
+                <TouchableOpacity
+                  style={[
+                    styles.mosqueItem,
+                    {
+                      backgroundColor:
+                        tempSelectedSlug === item.slug
+                          ? colors.mosque + "20"
+                          : "transparent",
+                      borderBottomColor: colors.border,
+                    },
+                  ]}
+                  onPress={() => setTempSelectedSlug(item.slug)}
+                >
+                  <Text style={[styles.mosqueItemText, { color: colors.text }]}>
+                    {item.name}
+                  </Text>
+                  {tempSelectedSlug === item.slug && (
+                    <Text style={[styles.checkmark, { color: colors.mosque }]}>
+                      ✓
+                    </Text>
+                  )}
+                </TouchableOpacity>
+              )}
+              style={styles.mosqueList}
+            />
+
+            <View style={styles.androidModalFooter}>
+              <TouchableOpacity
+                style={[
+                  styles.androidModalButton,
+                  { backgroundColor: colors.border },
+                ]}
+                onPress={handleAndroidModalClose}
+              >
+                <Text
+                  style={[
+                    styles.androidModalButtonText,
+                    { color: colors.text },
+                  ]}
+                >
+                  Cancel
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[
+                  styles.androidModalButton,
+                  { backgroundColor: colors.mosque },
+                ]}
+                onPress={() => handleAndroidMosqueSelect(tempSelectedSlug)}
+              >
+                <Text
+                  style={[styles.androidModalButtonText, { color: "#FFF" }]}
+                >
+                  Save
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
       <ScrollView
         style={[styles.container, { backgroundColor: colors.background }]}
       >
@@ -161,7 +285,7 @@ export default function SettingsScreen() {
                   style={[styles.button, { backgroundColor: BRAND_ORANGE }]}
                   onPress={handleChangeMosque}
                 >
-                  <ThemedText style={[styles.buttonText, { color: "#FFF" }]}>
+                  <ThemedText style={[styles.buttonText, { color: "#000" }]}>
                     Change
                   </ThemedText>
                 </TouchableOpacity>
@@ -373,5 +497,71 @@ const styles = StyleSheet.create({
   settingSubtitle: {
     fontSize: 14,
     lineHeight: 18,
+  },
+  // Android Modal Styles
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
+  },
+  androidModalContent: {
+    borderRadius: 12,
+    width: "100%",
+    maxHeight: "70%",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  closeButton: {
+    padding: 4,
+  },
+  closeButtonText: {
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  mosqueList: {
+    maxHeight: 400,
+  },
+  mosqueItem: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: 16,
+    borderBottomWidth: 1,
+  },
+  mosqueItemText: {
+    fontSize: 16,
+    flex: 1,
+  },
+  checkmark: {
+    fontSize: 16,
+    fontWeight: "bold",
+    marginLeft: 8,
+  },
+  androidModalFooter: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    padding: 20,
+    borderTopWidth: 1,
+    borderTopColor: "rgba(255, 255, 255, 0.1)",
+    gap: 12,
+  },
+  androidModalButton: {
+    flex: 1,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+    alignItems: "center",
+  },
+  androidModalButtonText: {
+    fontSize: 16,
+    fontWeight: "600",
   },
 });
